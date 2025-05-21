@@ -35,11 +35,8 @@ This Salesforce project automatically generates a **MID** (Merchant ID) when a L
   - `Lead_Type__c`
   - `LeadSource`
 
-## 📦 Deployment
-Use **Salesforce CLI** or **Change Sets** to deploy the code.
 
-```bash
-sfdx force:source:deploy -p force-app/main/default
+```
 
 📌 Notes
 Duplicate check is done using Email and MID__c.
