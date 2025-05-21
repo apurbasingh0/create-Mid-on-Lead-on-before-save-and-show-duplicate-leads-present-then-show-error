@@ -1,0 +1,9 @@
+.record-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+/* .slds-modal__container{
+    width: 75% !important;
+    max-width: 75% !important;
+} */

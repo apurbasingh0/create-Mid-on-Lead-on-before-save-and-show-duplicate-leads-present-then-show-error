@@ -1,0 +1,221 @@
+<!-- 
+    @description       : Lighting web Component for New Lead List View Button
+    @author            : Apurba Singh, Appstrail             
+    @last modified on  : 23-05-2023
+    @last modified by  : Apurba Singh, Appstrail
+    Modifications Log 
+    Ver   Date         Author          Modification
+    1.0   25-05-2023   Apurba Singh   Initial Version
+ -->
+ <template>
+  <div if:true={isLoading}>
+    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+  </div>
+  <template if:true={isrecordform}>
+    <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+            <!--Header-->
+            <div class="slds-modal__header" style="padding-top: 20px">
+                <div class="slds-grid">
+                    <template if:true={isDuplicate}>
+                    <lightning-icon icon-name="utility:warning" alternative-text="Warning!" variant="warning" title="warning variant" onclick={alerts} size="small"  style="padding-left: 467px;"></lightning-icon>
+                    <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate" style="padding-left:19px" >New Lead Record</h1>    
+                    <template if:true={thedisableok}>
+                      <section aria-describedby="dialog-body-id-110" aria-labelledby="dialog-heading-id-2" class="slds-popover slds-popover_warning slds-nubbin_right-bottom" role="dialog"  style="position: absolute; left: 146px; top: -45px;">
+                      <button class="slds-button slds-button_icon slds-button_icon-small slds-float_right slds-popover__close" title="Close dialog">
+                          <svg class="slds-button__icon" aria-hidden="true">
+                            <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#close"></use>
+                          </svg>
+                          <span class="slds-assistive-text">Close dialog</span>
+                        </button>
+                        <header class="slds-popover__header">
+                          <div class="slds-media slds-media_center slds-has-flexi-truncate ">
+                            <div class="slds-media__figure">
+                              <span class="slds-icon_container slds-icon-utility-warning">
+                                <svg class="slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                  <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#warning"></use>
+                                </svg>
+                              </span>
+                            </div>
+                            <div class="slds-media__body">
+                              <h2 class="slds-truncate slds-text-heading_medium" id="dialog-heading-id-2" title="Similar Records Exist">Similar Records Exist</h2>
+                            </div>
+                          </div>
+                        </header>
+                        <div class="slds-popover__body slds-popover_warning__body" id="dialog-body-id-110">
+                          <p>Another lead with same email Id exist, <br/>
+                          <a href="#" title="view duplicate lead/account" onclick={duplicateDetails}>view duplicate lead/account.</a> 
+                          Please change the email address to save the new lead. 
+                          <br/>
+                          </p>
+                        </div>
+                      </section>
+                      </template>  
+                    </template>
+                    <template if:false={isDuplicate}>
+                    <h1 id="modal-heading-02" class="slds-modal__title slds-hyphenate" style="padding-left:510px" >New Lead Record</h1>   
+                  </template> 
+                </div>
+                    
+            </div>
+            
+            <div class="slds-modal__content slds-p-around_medium" style="padding: 0px 20px 10px 20px;">
+                <lightning-record-form object-api-name="Lead" layout-type="Full" onsuccess={handleSuccess} onsubmit={handleSubmit} onerror={handleError} oncancel={handleCancel} mode ="edit" 
+                columns="2" >
+                    <!-- <lightning-messages></lightning-messages> -->
+                    
+                </lightning-record-form>
+            </div>
+    
+        </div>
+    
+   
+      
+
+    <template if:true={duplicateView}>
+     
+      <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_small">
+        <div class="slds-modal__container slds-align_absolute-center" style="padding-top: 20px ">
+          <lightning-icon class="edit-icon" icon-name="utility:close" title="close" variant="inverse"
+          size="x-small" onclick={canceldup} style="padding-left: 943px;padding-bottom: 7px;"></lightning-icon>
+          <div class="slds-modal__header" style="padding-bottom: 8px; width: 60rem;">
+            <h1 id="modal-heading-03" class="slds-modal__title slds-hyphenate" tabindex="-1">View Duplicates</h1>
+          </div>
+          <div if:false={isLoading2}> 
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+          </div>
+          <div  if:true={isLoading2} class="slds-modal__content slds-p-around_medium" style="padding: 0px 20px 10px 20px; width: 60rem;">
+            <br/>
+            <p>The record you're about to create looks like a duplicate. Open an existing record instead?</p>
+            <br/>
+            <div style="background-color: #dedede;">
+            <div >
+              <lightning-tabset active-tab-value="one">
+                <lightning-tab label="LEAD" value="one">
+                  <div class="slds-grid slds-wrap">
+                  <template for:each={duplicateList} for:item="record">
+                    <div key={record.Id} class="slds-col slds-order_2 slds-size_1-of-2 ">
+                      
+                  <div style="padding-right: 10px; padding-left: 5px; padding-top: 8px;">
+                    <lightning-card>
+                      <div class="slds-grid" style="padding-left: 15px;">
+                          <lightning-icon size='large' icon-name="standard:lead"></lightning-icon>
+                          <p style="padding-top: 6px; padding-left: 12px;">{record.Name} <br/> Lead</p>  
+                      </div>
+                      <table class="slds-table slds-table_cell-buffer">
+                          <tbody>
+                              <tr>
+                                  <th scope="row" style="padding-top: 15px;padding-bottom: 0px;">Name:</th>
+                                  <td style="padding-top: 15px;padding-bottom: 0px;">{record.Name}</td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" style="padding-top: 0px;padding-bottom: 0px">Lead Id:</th>
+                                  <td style="padding-top: 0px;padding-bottom: 0px;"><a href="#" title="leadrecords" onclick={leadduplinavigation} data-id={record.Id}>{record.lead_ID__c}</a></td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" style="padding-top: 0px;padding-bottom: 0px;">Company Name:</th>
+                                  <td style="padding-top: 0px;padding-bottom: 0px;">{record.Company}</td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" style="padding-top: 0px;padding-bottom: 0px;">Products Interest In:</th>
+                                  <td style="padding-top: 0px;padding-bottom: 0px;" >{record.Products_Interested_in__c}</td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" style="padding-top: 0px;padding-bottom: 0px;" >Lead Status:</th>
+                                  <td style="padding-top: 0px;padding-bottom: 0px;" >{record.Status}</td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" style="padding-top: 0px;padding-bottom: 0px;">Lead Type:</th>
+                                  <td style="padding-top: 0px;padding-bottom: 0px;">{record.LeadSource}</td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" style="padding-top: 0px;padding-bottom: 0px;">Action Type:</th>
+                                  <td style="padding-top: 0px;padding-bottom: 0px;">{record.LeadSource}</td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" style="padding-top: 0px;padding-bottom: 0px;" >Lead Source:</th>
+                                  <td style="padding-top: 0px;padding-bottom: 0px;">{record.Lead_Type__c}</td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" style="padding-top: 0px;padding-bottom: 6px;">Owner Alias:</th>
+                                  <td style="padding-top: 0px;padding-bottom: 6px;">{record.Owner.Alias}</td>
+                              </tr>
+                          </tbody>
+                      </table>
+                      <p slot="footer"><a href="#" title="view duplicate lead/account" onclick={leadduplinavigation} data-id={record.Id}>Open This Lead</a></p>
+                  </lightning-card>
+                </div>
+              </div>
+
+              </template>
+            </div>
+                </lightning-tab>
+                <lightning-tab label="ACCOUNT" value="two">
+                  <div class="slds-grid slds-wrap">
+                    <template for:each={duplicateListAccount} for:item="record">
+                      <div key={record.Id} class="slds-col slds-order_2 slds-size_1-of-2 ">
+                  <div style="padding-right: 10px; padding-left: 5px;padding-top: 8px;">
+                    <lightning-card>
+                      <div class="slds-grid" style="padding-left: 15px;">
+                          <lightning-icon size='large' icon-name="standard:account"></lightning-icon>
+                          <p style="padding-top: 6px; padding-left: 12px;">{record.Name} <br/> Account</p>  
+                      </div>
+                      <table class="slds-table slds-table_cell-buffer">
+                          <tbody>
+                              <tr>
+                                  <th scope="row" style="padding-top: 15px;padding-bottom: 0px;">Account Name:</th>
+                                  <td style="padding-top: 15px;padding-bottom: 0px;">{record.Name}</td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" style="padding-top: 0px;padding-bottom: 0px">Phone:</th>
+                                  <td style="padding-top: 0px;padding-bottom: 0px;">{record.Phone}</td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" style="padding-top: 0px;padding-bottom: 0px;">Account ID:</th>
+                                  <td style="padding-top: 0px;padding-bottom: 0px;"><a href="#" title="accountrecords" data-id={record.Id} onclick={accountduplinavigation}>{record.Account_ID__c}</a></td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" style="padding-top: 0px;padding-bottom: 0px;">Territory:</th>
+                                  <td style="padding-top: 0px;padding-bottom: 0px;" >{record.Territory__c}</td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" style="padding-top: 0px;padding-bottom: 0px;" >MID:</th>
+                                  <td style="padding-top: 0px;padding-bottom: 0px;" >{record.MID__c}</td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" style="padding-top: 0px;padding-bottom: 0px;">LOB:</th>
+                                  <td style="padding-top: 0px;padding-bottom: 0px;">{record.Industry}</td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" style="padding-top: 0px;padding-bottom: 0px;">Type:</th>
+                                  <td style="padding-top: 0px;padding-bottom: 0px;">{record.Type}</td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" style="padding-top: 0px;padding-bottom: 0px;" >Lead Source:</th>
+                                  <td style="padding-top: 0px;padding-bottom: 0px;">{record.Lead_Type__c}</td>
+                              </tr>
+                              <tr>
+                                  <th scope="row" style="padding-top: 0px;padding-bottom: 6px;">Account Owner Alias:</th>
+                                  <td style="padding-top: 0px;padding-bottom: 6px;">{record.Owner.Alias}</td>
+                              </tr>
+                          </tbody>
+                      </table>
+                      <p slot="footer"><a href="#" title="view duplicate lead/account" data-id={record.Id} onclick={accountduplinavigation}>Open This Lead</a></p>
+                  </lightning-card>
+                  </div>
+                  </div>
+                  </template>
+                </div>
+                </lightning-tab>
+            </lightning-tabset>
+            </div>
+          </div>
+          </div>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open" role="presentation" ></div>
+    </template>
+  </section>
+    <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+  </template>
+</template>
